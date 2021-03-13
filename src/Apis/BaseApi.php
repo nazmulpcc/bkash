@@ -75,7 +75,12 @@ abstract class BaseApi extends AbstractApi
     {
         $api = $this->subDomain . "." . $this->env;
 
-        return "https://" . $api . ".bka.sh";
+        return "https://" . $api . ".bka.sh/". $this->config[BkashKey::VERSION] . '/'. $this->urlPrefix();
+    }
+
+    public function getBaseURL()
+    {
+        return $this->baseUrl();
     }
 
     /**
@@ -89,5 +94,15 @@ abstract class BaseApi extends AbstractApi
             'Authorization' => $token,
             'X-APP-Key'     => $this->config[ BkashKey::APP_KEY ]
         ]);
+    }
+
+    public function json($data = [])
+    {
+        return $this->withJson($data);
+    }
+
+    public function headers($data = [])
+    {
+        return $this->withHeaders($data);
     }
 }

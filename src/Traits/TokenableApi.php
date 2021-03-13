@@ -2,6 +2,7 @@
 
 namespace Shipu\Bkash\Traits;
 
+use Illuminate\Support\Facades\Log;
 use Shipu\Bkash\Enums\BkashKey;
 
 /**
@@ -15,13 +16,18 @@ trait TokenableApi
      */
     public function grantToken()
     {
-        $tokenResponse = $this->json([
-            'app_key'    => $this->config [ BkashKey::APP_KEY ],
-            'app_secret' => $this->config [ BkashKey::APP_SECRET ],
-        ])->headers([
-            'username' => $this->config [ BkashKey::USER_NAME ],
-            'password' => $this->config [ BkashKey::PASSWORD ],
-        ])->post('/token/grant');
+        try {
+            $tokenResponse = $this->json($request = [
+                'app_key'    => $this->config [ BkashKey::APP_KEY ],
+                'app_secret' => $this->config [ BkashKey::APP_SECRET ],
+            ])->headers($headers = [
+                'username' => $this->config [ BkashKey::USER_NAME ],
+                'password' => $this->config [ BkashKey::PASSWORD ],
+            ])->post('/token/grant');
+        }catch (\Exception $e){
+            Log::info('bkash token request', compact('request', 'headers'));
+            throw $e;
+        }
 
         return $tokenResponse;
     }
